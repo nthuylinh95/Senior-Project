@@ -1,0 +1,626 @@
+\documentclass[11pt, twoside, reqno]{book}
+\usepackage{amssymb, amsthm, amsmath, amsfonts}
+\usepackage{graphicx}
+\usepackage{amsrefs}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage[toc,page]{appendix}
+\usepackage{float}
+\appendixpageoff
+
+\usepackage{bardtex}
+
+\styleoption{seniorproject}
+\newcommand{\sd}{\text{SD}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+%For senior projects:
+\titlepg{Expected Value and Standard Deviation of the Center of Mass of Random Configurations}{Nguyen Thuy Linh}
+    {May}{2018}
+
+\abstr
+
+In his senior project, Finn Hardy determined that the expected value of the center of mass of random configurations on the one-dimensional integer lattice $0, 1, \dots , n$ is equal to $n/2$, where a random configuration is obtained by randomly assigning to each $i$ between 0 and $n$ a mass of value $m$ or $M$, with probability $p$ and $1-p$ respectively. In this project, we will try to find a formula for the standard deviation, and subsequently the distribution, of the center of mass of this lattice. We will use R to create our database and statistically analyze obtained results, and Mathematica to perform complex computations. We will also consider other variations of the problem, such as one in which the points on the one-dimensional lattice are chosen uniformly from $0$ to $1$, as well as two-dimensional lattices.
+
+\tableofcontents
+
+%\dedic
+
+%I dedicate this senior project to every person I have ever met in my life.
+
+%\acknowl
+
+%I would like to acknowledge the help I received from every person I have ever met in my life.
+
+\dedic
+
+\acknowl
+
+\startmain
+
+
+\intro
+
+\section{Center of Mass in General}
+\label{sec1}
+The center of mass is, in simplest words, the mean position of the mass in an object. Due to its widely-used applications, it is not surprising that it piqued attention of many, who set their minds to further analyze the behavior and distribution of the center of mass. There is no doubt in the significance of this concept in sciences such as mathematics or physics. However, one might not realize how omnipresent this idea is in our everyday lives. A few years ago I came across a very interesting type of discipline, namely, rock balancing. It is an art in which rocks or stones of various shapes and sizes are naturally balanced on top of each other without the use of any other supporting materials. Little did I know back then that the stability of the rock structure depends heavily on the location of each stone's center of mass, relative to the support points. Many wonder about how some dancers, for instance, in ballet, seem to defy gravity as they move. The answer lies in the location of one's center of mass, that is, the point where the average distributions of mass of our body is situated in. If you stand straight, assuming a neutral pose, your center of mass will likely be somewhere within your body, most probably below your belly button. However, should you change position of any of your limbs, the center of mass shifts. \\
+Also, locating the center of mass in any system proves to be very useful in many disciplines such as astronomy, body motion, engineering designs, which is why it would be helpful to find any information related to accomplishing this task. In this paper, we will consider simple configurations, in which we will attempt to find the expected value and the standard deviation of the center of mass in hope that any findings will potentially facilitate the analysis of the center of mass in higher-dimensional systems, or more complex configurations.
+
+\chapter{Preliminaries}
+\label{Chap0}
+
+\section{Relevant Definitions and Theorems}
+\label{sec1}
+I will include theorems about: variance of two independent random variables, conditional expectation.
+
+In this paper, we will consider the center of mass of random configurations on coordinate planes, in which we assign to each position a mass of value $m$ and $M$, with probability $p$ and $1-p$, respectively. An example of such system that we will consider is a one-dimensional lattice with indices from $0$ to $n$ so that all the points are equally spaced from each other. Before we proceed, let us define terms that will be used extensively throughout this project. \\
+The center of mass is, as mentioned before, is a unique point in a system, where the average distribution of all the masses is located at.
+\defn
+\textbf{(Center of Mass)} The center of mass of a system is defined as 
+$$CM = \frac{\sum^{n}_{i=0}X_{i}M_{i}}{\sum^{n}_{i=0}M_{i}},$$
+where $n$ is the number of nodes, $M_{i}$ is the random variable for the value of mass, which is $m$ and $M$ with probabilities $p$ and $1-p$ respectively, $X_{i}$ is the coordinate of mass $M_{i}$, and $i$ is the index numbered between $0$ and $n$. \\ The total mass of the system is given by 
+$$M_{0} = \sum^{n}_{i=0}M_{i}.$$
+\edefn
+In other words,
+\[
+M_{i} =
+\begin{cases}
+m & \text{with probability } p \\
+M & \text{with probability } 1-p
+\end{cases}
+\]
+\\
+First, let us define a random variable:
+\defn
+\textbf{(Random Variable)} A random variable is a real-valued function defined on a sample space.
+\edefn
+
+\noindent Since we are dealing with expected value and standard deviation of many random variables in this paper, we will define these terms as well as any other related concepts used in the next chapters.
+\defn
+\textbf{(Expected Value)} For any discrete random variable $X$, we define the expected value of $X$ as
+$$\E[X] = \sum p_{i}x_{i},$$
+where $p_{i} = \mathbb{P}(X = x_{i})$, for any finite sums.
+\edefn
+\thm
+\textbf{(Expected Value of the Sum of Two Random Variables)} For any two random variables $X$ and $Y$ whose expected values exist, 
+$$\E[X+Y]=\E[X]+\E[Y].$$
+\ethm
+\coro
+\textbf{(Expected Value of a Linear Function of Several Random Variables)} For any random variables $X_{1}, X_{2},\dots, X_{n}$ with finite expected values, where $n$ is a positive integer, and constants $a_{1}, a_{2}, \dots, a_{n}$, it follows that
+$$\E \left[\sum_{i=1}^{n}a_{i}X_{i} \right] = \sum_{i=1}^{n} a_{i} \E[X_{i}].$$
+\ecoro
+\defn
+\textbf{(Expected Value of the Product of Two Independent Random Variables)} Let $X$ and $Y$ be any two independent random variables whose expected value exists. Then
+$$\E[XY] = \E[X]\E[Y].$$
+\edefn
+\defn
+\textbf{(Variance and Standard Deviation)} Let $X$ be any random variable. Then the variance and standard deviation of $X$ are defined as follows:
+$$\Var(X) = \E[X^{2}]-\E[X]^{2}$$
+and
+$$\sd(X)=\sqrt{\Var(X)},$$
+provided that $\Var(X)$ exists.
+\edefn
+\defn
+\textbf{(Covariance)} Let $X$ and $Y$ be any random variables. If $\E[X]$, $\E[Y]$, and $\E[XY]$ all exist, then the covariance of $X$ and $Y$ is
+$$\Cov(X,Y) = \E[XY] - \E[X]\E[Y].$$
+\edefn
+\noindent We need to define conditional probability in order to state the theorem of total expectation, which we will use to compute the expected value of the center of mass.
+\defn \textbf{(Conditional Probability for Discrete Random Variables)}
+If $X$ and $Y$ are discrete random variables such that $f_{X\mid Y} = \text{P}(X=x \mid Y=y)$ exists, then the conditional expectation of $X$ given $Y=y$ is defined by
+$$\E_{y}[X]=\sum_{x:f_{X \mid Y}(x)>0} xf_{X\mid Y} (x,y).$$
+\edefn
+\thm \textbf{(Theorem of Total Expectation)} Provided that all expectations below exist, then it follows that
+$$\E[\E_{Y}[X]] = \E[X].$$
+\ethm
+
+\noindent Since $M_{i}$ is a random variable that assigns a mass $m$ with probability $p$ and a mass $M$ with probability $1-p$, it follows that
+$$\E[M_{i}] = mp + M(1-p).$$
+As we have to often deal with the expected value of $M_{i}$ or $M_{i}^{2}$ in this paper, let us define $\alpha_{a}$ as 
+$$\alpha_{a} = m^{a}+M^{a}(1-p),$$ where $a$ is an exponent. We can utilize the formula as follows:
+$$\E[M_{i}] = mp+M(1-p) = \alpha_{1},$$
+$$\Var(M_{i}) = \E [M_{i}^{2}]-\E[M_{i}]^{2} = m^{2}p+M^{2}(1-p) - [mp+M(1-p)]^{2}=\alpha_{2} - \alpha_{1}^{2},$$
+as well as
+$$\E[M_{i}^{a}] = m^{a}p+M^{a}(1-p) = \alpha_{a}.$$
+
+\section{Previous Work}
+\label{sec2}
+
+We will use Finn Hardy's theorem says that the expected value for the center of mass on a one-dimensional lattice in the discrete case is $\frac{n}{2}$, where $n$ is the number of nodes. More generally, Finn proved that for both symmetric and asymmetric configurations, the expected value of the center of mass of any $n$-dimensional grid is equal to $\frac{n}{2}$. He performed a lot of experiments which theoretically verified his claim that regardless of the values of the masses $m$ and $M$, as well as the probability $p$, the center of mass is always in the middle of the grid - the expected value for the center of mass for each component of the lattice turned out to be $\frac{n}{2}$. Below are definitions and theorems cited from Finn's paper:
+
+\defn
+A grid is a coordinate plane consisting of small squares with $x$-axis, $y$-axis, and $z$-axis. Let $d \geq 1$ and let $L^{d}$ be the grid $[n] \times [n] \times [n] \times \dots \times [n] = [n]^{d}$ where $[n]=\{0,\dots,n\}$.
+\edefn
+
+\thm
+The expected value for the center of mass of $L^{1}$ is $\frac{n}{2}$.
+\ethm
+
+\thm
+Let $d$ be a positive integer. The expected value for the center of mass for each component of $L^{d}$ is $\frac{n}{2}$.
+\ethm
+
+\section{Motivation}
+\label{sec3}
+
+At the beginning of the project, we were interested in continuing Finn Hardy's senior project \cite{Bib5}, which mainly concerned looking for the expectation for the center of mass of finite integer grids, in which the positions are assigned discretely in an orderly manner, so that all points are equally spaced from each other. We tried to find a formula for the standard deviation of the center of mass in such a system. After that we looked at other cases that we found interesting, and attempted to find the expected value and standard deviation in those systems. Thus, in this project, we are mainly considering three cases: the one-dimensional discrete case, one-dimensional uniform case (in which we choose position indices $i$ uniformly), and two-dimensional uniform case (unit circle, in which the angle $\theta$ is chosen uniformly). Below are pictures that illustrate the cases of concern. The uniformly chosen angles $\theta_{i}$ in the two-dimensional case are defined as $t_{0},t_{1}, \dots, t_{n}$. \\
+
+\begin{figure}[H]
+\includegraphics[scale=0.7]{1DDDC.png}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[scale=0.75]{2DC.png}
+\end{figure}
+
+\noindent Due to the widespread applications of the concept of the center of mass in various disciplines, we hope that any findings in these cases will facilitate the process of calculating it in more complex systems.
+
+\section{Methods}
+\label{sec4}
+
+\subsection{Formulas}
+Since the formula for the center of mass is in a fraction form, in calculating its expectation and standard deviation, we had to find ways to compute the expected value of the ratio of two random variables (the nominator and the denominator):
+$$\E[CM] = \E \left[\frac{\sum X_{i}M_{i}}{\sum M_{i}} \right].$$
+This term proves hard to compute unless, for instance, we assume that there are $k$ of the masses $m$ and $n+1-k$ of the masses $M$, in which case it would follow that
+$$\E[CM] = \E \left[\frac{\sum X_{i}M_{i}}{\sum M_{i}} \right] =\frac{\E \left[\sum X_{i}M_{i}\right]}{\E\left[\sum M_{i}\right]}.$$
+Throughout the paper, we extensively use Taylor approximation formulas to estimate expected value and variance of a ratio of two random variables, which are found in the article by Professor Howard Zeltman \cite{Bib3}. \\
+Let $R$ and $S$ be any random variables. Then the first-order approximation for expected value is
+\begin{align}
+\E [R/S] \approx \frac{\E[R]}{\E[S]}, & \tag{first order}
+\end{align}
+the second-order Taylor approximation for expected value is
+\begin{align}
+\E[R/S] \approx \frac{\mu_{R}}{\mu_{S}}-\frac{\Cov(R,S)}{\mu_{S}^{2}}+\frac{\Var(S)\mu_{R}}{\mu_{S}^{3}}, & \tag{second order}
+\end{align}
+and the first-order Taylor approximation for variance is
+\begin{align}
+\Var(R/S) \approx \frac{\mu_{R}^{2}}{\mu_{S}^{2}}\left[ \frac{\sigma_{R}^{2}}{\mu_{R}^{2}}-2\frac{\Cov(R,S)}{\mu_{R}\mu_{S}}+\frac{\sigma_{S}^{2}}{\mu_{S}^{2}}\right]  & .\tag{first order}\label{eq:first order}
+\end{align}
+We can thus estimate the expected value of the center of mass using first two approximations. We can estimate the standard deviation using the third equation, or first using the formula for variance
+$$\Var(X) = \E[X^{2}]-\E[X]^{2},$$
+and then using either first-order or second-order Taylor approximation for the expected value inside that equation (after we find or estimate the expected value of the center of mass, we would only need to approximate $\E[X^{2}]$ in order to calculate variance, and subsequently standard deviation. \\
+As mentioned above, if we assume the number of one of the masses from the beginning, we can find the expected value and standard deviation without using approximations. Let $M_{i}$ be the random variable which is $m$ with probability $p$ and $M$ with probability $1-p$, $n$ be the number of nodes, $k$ be the number of masses $m$ and $M_{0}$ be the total mass of the system. Then using the theorem for total expectation, we have that the expected value of the center of mass is
+$$\E[CM] = \sum_{k=0}^{n+1} \E[CM \mid \text{Total Mass} = M_{0}] \mathbb{P}(\text{Total Mass} = M_{0})$$
+and
+$$\E[CM^{2}] =  \sum_{k=0}^{n+1} \E[CM^{2} \mid \text{Total Mass} = M_{0}] \mathbb{P}(\text{Total Mass} = M_{0}),$$
+where
+$$\mathbb{P}(\text{Total Mass} = M_{0}) = \binom{n+1}{k} p^{k} (1-p)^{n+1-k}$$ and
+$$M_{0} = km+(n+1-k)M.$$
+
+\subsection{Algorithms}
+
+In order to compute some of the approximations above, which included complicated double or triple summation forms, we used Mathematica. The code for the algorithms is included in Appendix B. We also used the \textit{simplify} command in this program to simplify complex equations. Since we could not compute the proven formulas for big $n$'s in R, we used Mathematica to do so. \\
+We performed simulations in R Studio in order to obtain the expected value and standard deviation of the center of mass in different configurations. The codes for the three cases we considered in this paper are included in Appendix A. The codes also include algorithms for approximations, which are run simultaneously with the simulations. \\
+In the code for simulations, we set the values of $m$, $M$, and create a sample space with these masses using the \textit{sample.space()} command. We then set the value of the probability $p$ of getting a small mass $m$, the number of nodes $n$. For the one-dimensional discrete case, we create a simple vector with positions from $0$ to $n$. For the one-dimensional uniform case, we create a vector with positions chosen randomly and uniformly from $0$ to $n$ by using the \textit{runif()} command. We then assign a mass of $m$ with probability $p$ and $M$ with probability $1-p$ using the \textit{sample()} command. As for the two-dimensional uniform case, we create the angles $\theta$ uniformly from $0$ to $2\pi$, based on which we obtain $x$ and $y$ coordinates of the circle. Then we we used the \textit{sample()} command like in the previous cases, to assign masses to each of the coordinates. We generate data sets and set the number of times to repeat the process of creating a center of mass to be $10^{3}-1$ times. We then use the \textit{mean()} command to estimate the expected value of the center of mass, and the \textit{sd()} command to find its sample standard deviation. With these data sets, we can also create histograms of results to look at the distribution of the values of the center of mass, or histograms of the sampling distribution of the means. \\
+
+\section{Summary of Results}
+\label{sec5}
+
+
+\chapter{Center of Mass in the One-dimensional Discrete Case}
+\label{chapA}
+
+\section{Introduction to the Case}
+\label{secA1}
+
+We began our project with the investigation into the one-dimensional discrete case. We performed simulations on an integer lattice with positions indexed in order $0, 1, \dots , n$. As already mentioned, Finn Hardy proved in his senior project that the expected value of the center of mass in this case is $\mathbb{E} [CM] = \frac{1}{2}$. What we are seeking to find is the standard deviation of the center of mass in this system. To prove this, we would first have to find the variance. The difficulty we encountered is that the former term of the typical formula for variance, $\Var (CM) = \mathbb{E}[CM^{2}] - \mathbb{E}[CM]^{2}$, i.e., $\Var\left(\frac{\sum^{n}_{i=0} iM_{i}}{\sum^{n}_{i=0}M_{i}}\right) = \mathbb{E}\left[\left(\frac{\sum^{n}_{i=0} iM_{i}}{\sum^{n}_{i=0}M_{i}}\right)^{2}\right] - \mathbb{E}\left[\frac{\sum^{n}_{i=0} iM_{i}}{\sum^{n}_{i=0}M_{i}}\right]^{2}$, is very hard to compute. 
+
+\section{Variance and Standard Deviation - Proof}
+\label{secA2}
+
+One of the ways we tried to find the standard deviation of the center of mass was by using the typical formula for variance, $\Var (X) = \mathbb{E} [X^{2}] - \mathbb{E}[X]^{2}$. We know from Finn's senior project that the latter term is equal to $\left(\frac{n}{2}\right)^{2}$. Now let us look at the former term and apply it to our case. We would have  
+$$\Var (CM) = \mathbb{E}\left[\left(\frac{\sum^{n}_{i=0} iM_{i}}{\sum^{n}_{i=0}M_{i}}\right)^{2}\right] - \left(\frac{n}{2}\right)^{2}.$$
+The problematic term is the expected value of the center of mass squared. Unfortunately, the numerator and denominator are not independent of each other. Thus, we had to look for ways of finding or approximating the term. As for the approximation, the formula we came across was second-order Taylor expansion for the expected value of the ratio of two random variables from a paper by CMU \cite{Bib3}. We will take a look at the approximation later. \\
+First, we will try to find variance directly, by utilizing conditional expected value. We could also prove the expected value of the center of mass is $\frac{n}{2}$ (which was proven by Finn) using this method:
+$$\E[CM] = \E\left[\frac{\sum iM_{i}}{\sum M_{i}} \right] = \sum^{n+1}_{k=0} \E\left[ \frac{\sum iM_{i}}{\sum M_{i}}  \Bigg| \text{Mass} = M_{0} \right] \mathbb{P} (\text{Mass} = M_{0}),$$
+where $M_{0}$ is the total mass of the configuration, $k$ is the total number of masses $m$ in the configuration, which occur with probability $p$, and $n+1-k$ is the number of masses $M$, which occur with probability $1-p$.
+We also have that in this case
+$$\E [M_{i} | \text{Mass} = M_{0}] = \frac{km+(n+1-k)M}{n+1},$$
+$$\mathbb{P}(\text{Mass} = M_{0}) = \binom{n+1}{k} p^{k} (1-p)^{n+1-k}$$ and
+$$M_{0} = km+(n+1-k)M.$$
+Plugging these into our equation, we have
+$$\E[CM] = \sum_{k=0}^{n+1} \frac{\E\left[\sum iM_{i} | \text{Mass} = M_{0} \right]}{\E\left[\sum M_{i} | \text{Mass} = M_{0} \right]} \mathbb{P} (\text{Mass} = M_{0}) = \sum_{k=0}^{n+1} \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km+(n+1-k)M} \cdot \E\left[\sum iM_{i} | M_{0}\right]=$$
+$$=\sum_{k=0}^{n+1} \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km+(n+1-k)M} \cdot  \frac{n(n+1)}{2} \cdot \frac{km+(n+1-k)M}{n+1} = \frac{n}{2}.$$
+To calculate the variance, which is $\Var(CM)=\E[CM^{2}]-\E[CM]^{2}$, we would need to find the following:
+$$\E[CM^{2}] = \E\left[\frac{\left(\sum iM_{i}\right)^2}{\left(\sum M_{i} \right)^2} \right] = \sum^{n}_{k=0} \E\left[ \frac{\left(\sum iM_{i}\right)^2}{\left(\sum M_{i}\right)^2}  \Bigg| \text{Mass} = M_{0} \right] \mathbb{P} (\text{Mass} = M_{0}).$$
+Given that the total mass of the system is $M_{0}$, it follows that 
+$$\E[M_{i}^{2} \mid \text{Mass} = M_{0}]=\frac{km^{2}+(n+1-k)M^{2}}{n+1}.$$
+Thus, we have
+$$\E[CM] =  \sum_{k=0}^{n+1} \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km^{2}+(n+1-k)M^2}\cdot \E\left[ \left(\sum iM_{i}\right)^2 \bigg| M_{0} \right] = $$
+$$=\sum_{k=0}^{n+1} \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km^{2}+(n+1-k)M^2}\cdot \E\left[ \sum_{i=0}^{n} i^{2}M_{i}^{2} + \sum_{i \neq j} ijM_{i}M_{j} \bigg| M_{0} \right].$$
+Since $\E\left[\sum_{i\neq j}ij M_{i}M_{j} \mid M_{0}\right]=\E\left[ M_{i}M_{j}\right]\sum_{i\neq j}ij$, we need to find $\E\left[M_{i}M_{j} \mid \text{Mass}=M_{0} \right]$, where $i \neq j$. Since we are looking at the expected value of the product of two distinct random variables, we can either have the product of two small masses, $m^2$, two big masses, $M^2$, or one small mass and one big mass - $mM$ or $Mm$. Given that we have $k$ of small masses $m$, and $n+1-k$ of big masses $M$, the number (total count) of such products of two distinct random variables would be $k(k-1)$ of $m^2$'s, $(n+1-k)(n-k)$ of $M^2$'s, and $2k(n+1-k)$ of $Mm$'s and $mM$'s together. To find the expected value, we have to sum all these possibilities together and then divide the result by $n(n+1)$, which is the total number of combinations we can obtain through taking a product of two distinct random variables out of $n+1$ random variables. Thus, we have that
+$$\E[M_{i}M_{j} \mid \text{Mass}=M_{0}] = \frac{mM\cdot 2k(n+1-k)+m^{2}\cdot k(k-1)+M^{2}(n+1-k)(n-k)}{n(n+1)}.$$
+With help of Mathematica, I tried to simplify and order the above equation with respect to $k$, $m$ and $M$, and found that it simplifies to the following:
+$$\E[M_{i}M_{j} \mid \text{Mass}=M_{0}] = \frac{(km+(n+1-k))^{2}-(km^{2}+(n+1-k)M^{2})}{n(n+1)}.$$
+As a result,
+$$\E\left[\sum_{i\neq j}ij M_{i}M_{j} \mid \text{Mass} = M_{0}\right]=\E\left[ M_{i}M_{j}\right]\sum_{i\neq j}ij=\E\left[ M_{i}M_{j}\right] \cdot \frac{3n^{4}+2n^{3}-3n^{2}-2n}{12}=$$
+$$=\frac{(km+(n+1-k))^{2}-(km^{2}+(n+1-k)M^{2})}{n(n+1)} \cdot \frac{n(n+1)(n-1)(3n+2)}{12}=$$
+$$=\frac{(n-1)(3n+2)}{12} \left[(km+(n+1-k))^{2}-(km^{2}+(n+1-k)M^{2})\right].$$
+Going back to finding the expected value of the center of mass squared and plugging in the obtained results, we have
+$$\E[CM^{2}] =  \sum_{k=0}^{n+1} \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km^{2}+(n+1-k)M^2}\cdot \E\left[ \sum_{i=0}^{n} i^{2}M_{i}^{2} + \sum_{i \neq j} ijM_{i}M_{j} \bigg| M_{0} \right] = $$
+$$=\sum_{k=0}^{n+1} \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km^{2}+(n+1-k)M^2}\cdot \bigg[ \frac{n(n+1)(2n+1)}{6} \cdot \frac{km^{2}+(n+1-k)M^{2}}{n+1}+$$
+$$+\frac{(n-1)(3n+2)}{12} \left[(km+(n+1-k))^{2}-(km^{2}+(n+1-k)M^{2})\right] \bigg]=$$
+$$ =\sum_{k=0}^{n+1} \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km^{2}+(n+1-k)M^2}\cdot \bigg[\frac{(n+1)(n+2)}{12}\cdot (km^{2}+(n+1-k)M^{2}) +$$
+$$+ \frac{(n-1)(3n+2)}{12}\cdot (km+(n+1-k)M)^2 \bigg]=$$
+$$=\frac{(n+1)(3n+2)}{12} +\frac{(n+1)(n+2)}{12} \cdot \sum_{k=0}^{n+1} \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km^{2}+(n+1-k)M^2}\cdot \left(km^{2}+(n+1-k)M^{2}\right).$$
+Hence, the variance of center of mass would be 
+$$\Var(CM) = \E[CM^{2}]-\E[CM]^{2} =$$
+$$=\left[ \frac{(n+1)(3n+2)}{12} +\frac{(n+1)(n+2)}{12} \cdot \sum_{k=0}^{n+1} \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km^{2}+(n+1-k)M^2}\cdot \left(km^{2}+(n+1-k)M^{2}\right)\right] - \frac{n^{2}}{4}=$$
+$$=\frac{5n+2}{12}+\frac{(n+1)(n+2)}{12} \cdot \sum_{k=0}^{n+1} \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km^{2}+(n+1-k)M^2}\cdot \left(km^{2}+(n+1-k)M^{2}\right) .$$
+TBC \\
+\section{Variance and Standard Deviation - Approximations}
+\label{secA3}
+We can now look at the approximations of the variance, $\Var(CM) = \E[CM^{2}]-\E[CM]^{2}$. The mentioned formula for the approximated expected value of a ratio of two random variables is as follows:
+$$\mathbb{E}(R/S) \approx \frac{\mu_{R}}{\mu_{S}} - \frac{\Cov(R, S)}{(\mu_{S})^2}+\frac{\Var(S)\mu_{R}}{(\mu_{S})^{3}}.$$
+In our case, $R = \left(\sum^{n}_{i=0} iM_{i}\right)^{2}=\sum^{n}_{i=0} i^{2}M_{i}^{2}+\sum_{i\neq j} ijM_{i}M_{j}$ and $S=\left(\sum^{n}_{i=0}M_{i}\right)^{2}=\sum^{n}_{i=0}M_{i}^{2}+\sum_{i \neq j}M_{i}M_{j}$, where $\sum_{i \neq j}$ are double sums $\sum\limits_{i=0}^{n}\sum\limits_{j=0}^{n}$ such that $i \neq j$. To calculate single summations, I used Wolfram Alpha online software, and to calculate the more complicated double summation with $i\neq j$, I used Mathematica. I provided the chunk of code in Appendix B. Thus, we have
+$$\mathbb{E}[R] = \frac{n(n+1)(2n+1)}{6} \mathbb{E}[M_{i}^{2}]+\left[ \left[\frac{n(n+1)}{2}\right]^{2}-\frac{n(n+1)(2n+1)}{6}\right] \mathbb{E}[M_{i}]\mathbb{E}[M_{j}] = $$
+$$=\frac{n(n+1)(2n+1)}{6} \alpha_{2} + \left[ \frac{3n^{4}+2n^{3}-3n^{2}-2n}{12}\right]\alpha^{2}_{1},$$
+$$\mathbb{E}[S] = (n+1)\mathbb{E}[M_{i}^{2}]+n(n+1)\mathbb{E}[M_{i}]\mathbb{E}[M_{j}] = (n+1)\alpha_{2}+n(n+1)\alpha^{2}_{1},$$
+$$\Cov(R,S) = \mathbb{E}[RS]-\mathbb{E}[R]\mathbb{E}[S]=\mathbb{E}\left[\left(\sum^{n}_{i=0} i^{2}M_{i}^{2}+\sum_{i\neq j} ijM_{i}M_{j}\right)\left(\sum^{n}_{i=0}M_{i}^{2}+\sum_{i \neq j}M_{i}M_{j} \right) \right] -\mathbb{E}[R]\mathbb{E}[S].$$
+We analyzed and broke down the former term as follows:
+$$\mathbb{E}\left[\left(\sum^{n}_{i=0} i^{2}M_{i}^{2}+\sum_{i\neq j} ijM_{i}M_{j}\right)\left(\sum^{n}_{i=0}M_{i}^{2}+\sum_{i \neq j}M_{i}M_{j} \right) \right]=$$
+$$= \E \left[\left(\sum i^2M_{i}^2 \right)\left(\sum M_{i}^2\right) + \left(\sum i^{2} M_{i}^2\right)\left(\sum M_{i}M_{j}\right) + \left(\sum ij M_{i}M_{j}\right)\left(\sum M_{i}^{2}\right)+\left(\sum ij M_{i}M_{j}\right)\left( \sum M_{i}M_{j}\right) \right]=$$
+$$= \E \bigg[\left( \sum i^2M_{i}^{4}+\sum i^{2}M_{i}^{2}M_{j}^{2}\right) + \left(\sum i^{2} M_{i}^{3}M_{j} + \sum j^{2}M_{i}M_{j}+\sum i^{2}M_{i}^{2}M_{j}M_{k} \right) +$$
+$$+ \left( \sum ij M_{i}^{3}M_{j} + \sum ij M_{i}M_{j}^{3} + \sum ij M_{i}M_{j}M_{k}^{2}\right) +$$
+$$ +\left(2\sum ij M_{i}^{2}M_{j}^{2}+\sum ij M_{i}^{2}M_{j}M_{k}+\sum ij M_{i}M_{j}^{2}M_{k}+\sum ij M_{i}M_{j}M_{k}M_{l} \right) \bigg] =$$
+$$=\frac{n(n+1)(2n+1)}{6} \alpha_{4} + \frac{n^{2}(2n^{2}+3n+1)}{6} \alpha_{2}^{2} + 2\frac{n^{2}(2n^{2}+3n+1)}{6}\alpha_{3}\alpha_{1} + \frac{n^{2}(2n+1)(n^{2}-1)}{6}\alpha_{2}\alpha_{1}^{2} + $$
+$$+2\frac{3n^{4}+2n^{3}-3n^{2}-2n}{12}\alpha_{3}\alpha_{1} + \frac{n(n-1)^{2}(3n^{2}+5n+2)}{12}\alpha_{1}^{2}\alpha_{2} + 2\frac{3n^{4}+2n^{3}-3n^{2}-2n}{12}\alpha_{2}^{2} + $$
+$$+2\frac{2(n-1)^{2}(3n^2+5n+2)}{12}\alpha_{2}\alpha_{1}^{2}+\frac{n(n-2)(n-1)^{2}(n+1)(3n+2)}{12}\alpha_{1}^{4} =$$
+$$=\frac{1}{12} n((-2 + n) (-1 + n)^2 (1 + n) (2 + 3 n) \alpha_{1}^{4} + (n-1) (-6 + n(-5 + 3 n (5 + 4 n))) \alpha_{1}^{2} \alpha_{2} + $$
+$$+2 (1 + n) (-2 + n + 7 n^2) \alpha_{1}\alpha_{3}+2 (1 + n) ((-2 + 5 n^2) 
+\alpha_{2}^{2} + (1 + 2 n) \alpha_{4})),$$
+which we obtained through calculating in Mathematica. \\
+TBC \\
+Another of the ways we tried was to use an approximation directly for the variance by using second-order Taylor expansion from the same paper mentioned above, which is as follows
+$$\Var(R/S) = \frac{\mu_{R}^{2}}{\mu_{S}^{2}}\left[ \frac{\sigma_{R}^{2}}{\mu_{R}^{2}} - 2 \frac{\Cov(R, S)}{\mu_{R}\mu_{S}}+ \frac{\sigma^{2}_{S}}{\mu_{S}^{2}}\right].$$
+In this case, we have $R = \sum^{n}_{i=0} iM_{i}$ and $S = \sum^{n}_{i=0}M_{i}$. Then:
+$$\mathbb{E}[R] = \mathbb{E}\left[\sum^{n}_{i=0}iM_{i} \right]= \frac{n(n+1)}{2}\alpha_{1},$$
+$$\mathbb{E}[S] = \mathbb{E}\left[\sum^{n}_{i=0}M_{i}\right] = (n+1)\alpha_{1},$$
+$$\sigma_{S} = \Var\left(\sum^{n}_{i=0}M_{i}\right) = \sum^{n}_{i=0}\Var(M_{i})=(n+1)(\alpha_{2}-\alpha^{2}_{1}),$$
+$$\sigma_{R} = \sum^{n}_{i=0} i^{2} \Var(M_{i})=\frac{n(n+1)(2n+1)}{6}(\alpha_{2}-\alpha^{2}_{1}).$$
+To find the covariance, we used the second-order Taylor expansion to solve for covariance, and more precisely, the term closest to the one we need ($2 \frac{\Cov(R, S)}{\mu_{S}}$):
+$$\mathbb{E}(R/S) \approx \frac{\mu_{R}}{\mu_{S}} - \frac{\Cov(R, S)}{(\mu_{S})^2}+\frac{\Var(S)\mu_{R}}{(\mu_{S})^{3}}$$
+$$\frac{n}{2} = \frac{n}{2} - \frac{\Cov(R,S)}{(\mu_{S})^2} + \frac{(n+1)(\alpha_{2}-\alpha^{2}_{1})\frac{n(n+1)}{2}\alpha_{1}}{\mu_{S}^{3}}$$
+$$\frac{\Cov(R,S)}{\mu_{S}} =  \frac{(n+1)(\alpha_{2}-\alpha^{2}_{1})\frac{n(n+1)}{2}\alpha_{1}}{\mu_{S}^{2}}.$$
+Now we will calculate each term of our formula for variance:
+$$\frac{\mu_{R}^{2}}{\mu_{S}^{2}}= \frac{ n^{2}}{4},$$
+$$\frac{\sigma_{R}^{2}}{\mu_{R}^{2}}=\frac{\frac{n^{2}(n+1)^{2}(2n+1)^{2}}{36}(\alpha_{2}-\alpha^{2}_{1})^{2}}{\frac{n^{2}(n+1)^{2}}{4}\alpha^{2}_{1}}=\frac{(2n+1)^{2}(\alpha_{2}-\alpha^{2}_{1})^{2}}{9\alpha^{2}_{1}},$$
+$$2 \frac{\Cov(R, S)}{\mu_{R}\mu_{S}} = 2 \frac{(n+1)(\alpha_{2}-\alpha^{2}_{1})\frac{n(n+1)}{2}\alpha_{1}}{\mu_{R}\mu_{S}^{2}} =2 \frac{(n+1)(\alpha_{2}-\alpha^{2}_{1})\frac{n(n+1)}{2}\alpha_{1}}{\frac{n(n+1)}{2}\alpha_{1} (n+1)^{2}\alpha_{1}^{2}} = 2\frac{(\alpha_{2}-\alpha^{2}_{1})}{(n+1)\alpha_{1}^{2}},$$
+$$\frac{\sigma_{S}^{2}}{\mu_{S}^{2}} = \frac{(n+1)^{2}(\alpha_{2}-\alpha^{2}_{1})^{2}}{(n+1)^{2}\alpha^{2}_{1}}=\frac{(\alpha_{2}-\alpha^{2}_{1})^{2}}{\alpha^{2}_{1}}.$$
+Hence, we have 
+$$\Var(R/S) =  \frac{ n^{2}}{4}\left(\frac{(2n+1)^{2}(\alpha_{2}-\alpha^{2}_{1})^{2}}{9\alpha^{2}_{1}} -  2\frac{(\alpha_{2}-\alpha^{2}_{1})}{(n+1)\alpha_{1}^{2}} + \frac{(\alpha_{2}-\alpha^{2}_{1})^{2}}{\alpha^{2}_{1}} \right).$$
+After simplifying this equation in Mathematica using the simplify function, we get 
+$$\Var(R/S) =\frac{n^2}{4}\left(\frac{2 \left(\alpha_{1}^{2}-\alpha_{2}\right) \left((n+1) (2 n (n+1)+5) \alpha_{1}^{2}-(n+1) (2 n (n+1)+5) \alpha_{2}+9\right)}{9 (n+1) \alpha_{1}^{2}}\right).$$
+TBC
+
+\section{Simulations}
+\label{secA4}
+We created a code in R to conduct simulations for the case considered, using the provided definition of the center of mass. Since we found that the results are prone to variation, we decided to use the proven formula. The code for the simulations, as well as the proven formula is included in Appendix A.1. Since R cannot compute the formula for big values of $n$, we also included the Mathematica code for the proven formula which we used to calculate the standard deviation for big $n$'s. For the simplicity of experiments, we decided to set the value of $m=1$, and vary other factors, such as the probability $p$, number of nodes $n$, and the value of $M$. We noticed that as we increase the value of mass $M$, there is a limit to which the standard deviation tends to. We decided record the standard deviation obtained through maximizing the $M$ value so that we get the maximum standard deviation we can get from the software. The table below summarizes approximated results for standard deviation of the center of mass obtained through this empirical sampling in Mathematica:
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.7]{TableDis.png}
+\caption{Approximated standard deviation for the one-dimensional discrete case, where m = 1 is one of the masses, M is the other mass, p is the probability, and n is the number of nodes.}
+\label{TableDis}
+\end{figure}
+ 
+We notice that, as opposed to the expected value of the center of mass which relies solely on $n$, the standard deviation depends on all the factors --- the probability, the number of nodes, and the values of masses. As expected, the results we obtained hint at the proven before fact that the configurations are more or less symmetrical. Intuitively, the standard deviations in the $n = 100$ columns seem to differ by around a factor of a little over $3$ compared to those in column $n = 1000$. It seems to be the case in $n=1000$ and $n=10000$. It is possible that since $n$ increases by a factor of $10$ in those cases, then the standard deviation increases by approximately $\sqrt{10} \approx 3.16227766017$. This can be further analyzed.\\
+Below is the table with results of standard deviation for a basic case, where $m = 1$ and $M=0$ (we cannot set the values of masses the other way around, because the proven formula would give us NaN's). 
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.7]{TableDis2.png}
+\caption{Approximated standard deviation for the one-dimensional discrete case, where m = 1 is one of the masses, M = 0 is the other mass, p is the probability, and n is the number of nodes.}
+\label{TableDis}
+\end{figure}
+Again, we can see that there is some relationship between standard deviations in columns with varying $n$'s. If we consider $n = 100$ and $n=500$ columns, the $n$ increases by a factor of $5$, and at the same time, the standard deviation seems to increase by a little over $2$, possibly the square root of $5$. For instance, if we compare the standard deviations in this case in the row with probability $p=0.1$, and $n=100$, $n=500$, and look at the ratio of the latter to the former, we get
+$$\frac{19.604}{9.28272}\approx 2.111881,$$
+and the square root of $5$ is
+$$\sqrt{5} \approx 2.2360679775.$$
+If we look at the same row, and $n=500$, $n=1000$, where $n$ increases by a factor of $2$, we would get
+$$\frac{27.5528}{19.604} \approx 1.405468272,$$
+and the square root of $2$ is
+$$\sqrt{2} \approx 1.41421356237.$$
+Furthermore, if we were to standardize our results (by dividing the position index $i$ by $n$, thus dividing the results in the table by $n$), it seems that the standard deviation approaches $0$ as $n$ gets larger and larger. We will look into this option of standardization later in the paper. What we will try to do is find a formula for the standard deviation that fits the data obtained through simulations.
+
+\section{Analysis of Results}
+We will compare the results obtained from the formula with the ones received from simulations.
+\label{secA5}
+
+\section{Conclusion}
+\label{secA6}
+
+\chapter{Center of Mass in the One-dimensional Uniform Case}
+\label{chapB}
+
+\section{Introduction to the Case and Simulations}
+\label{secB2}
+
+We looked at another variation of configurations on the one-dimensional lattice - instead of indexing the positions in order from $0$ to $n$, we chose the indices $i$ uniformly, between $0$ and $1$. Thus, our formula for the center of mass becomes
+$$CM = \frac{\sum^{n}_{i=0}Y_{i}M_{i}}{\sum^{n}_{i=0}M_{i}},$$
+where $Y_{i}$ is a uniform random variable. Unlike the previous case, here the variables $M_{i}$ and $Y_{i}$ are independent of each other, and calculating the expected value and standard deviation of the former is not a problem. \\
+We modified the code of the discrete case so that the positions are assigned uniformly. The code is provided in Appendix 1.2. In this case, we will first try to find the expected value and standard deviation of the center of mass ``by hand" to see if they match our results from simulations, which will be provided later. In the next chapter we will try to find, or approximate, the expected value of the center of mass in this continuous case, and after that we will look at variance and standard deviation.
+
+\section{Expected Value}
+\label{secB3}
+We expect the expected value of the center of mass to be $\frac{1}{2}$, since we the positions are assigned randomly from the uniform function, between $0$ and $1$. We will provide a rigorous proof for the finding, as well as approximations that indicate similar value. \\
+First, we will look at a rigorous proof that $\E[CM] = \frac{1}{2}$ in this case. We will use conditional expactation, where $M_{0}$ is the total mass of the configuration, $k$ is the total number of masses $m$ in the configuration, which occur with probability $p$, and $n+1-k$ is the number of masses $M$, which occur with probability $1-p$:
+$$\E[CM] = \sum \E[CM \mid \text{Mass} = M_{0}] \mathbb{P}(\text{Mass} = M_{0}).$$
+We also have that
+$$\mathbb{P}(\text{Mass} = M_{0}) = \binom{n+1}{k} p^{k} (1-p)^{n+1-k}$$ and
+$$M_{0} = km+(n+1-k)M.$$
+We can now calculate the expected value as follows:
+$$\E[CM] = \E\left[\frac{\sum Y_{i}M_{i}}{\sum M_{i}} \right] = \sum \E\left[ \frac{\sum Y_{i}M_{i}}{\sum M_{i}}  \Bigg| \text{Mass} = M_{0} \right] \mathbb{P} (\text{Mass} = M_{0}).$$
+Since $Y_{i}$ and $M_{i}$, as well as $Y_{i}M_{i}$ and $M_{i}$ are independent variables (because of the given total mass of the system), we have
+$$\E\left[\sum Y_{i} M_{i} \mid M_{0}\right] = \sum^{n}_{i=0} \E[Y_{i}M_{i} \mid M_{0}] = \sum^{n}_{i=0} \E[Y_{i} \mid M_{0}] \E[M_{i} \mid M_{0}] = \frac{1}{2}\sum^{n}_{i=0} \E[M_{i} \mid M_{0}] = \sum $$
+$$=\frac{1}{2} km+(n+1-k)M.$$
+Thus, we have 
+$$\E[CM] =\sum \E\left[ \frac{\sum Y_{i}M_{i}}{\sum M_{i}}  \Bigg| \text{Mass} = M_{0} \right] \mathbb{P} (\text{Mass} = M_{0}) = \sum \frac{\E\left[ \sum Y_{i}M_{i} \mid \text{Mass} = M_{0} \right]}{\E [\sum M_{i} \mid \text{Mass} = M_{0}] } \mathbb{P} (\text{Mass} = M_{0})=$$
+$$=\sum \frac{\binom{n+1}{k}p^{k}(1-p)^{n+1-k}}{km+(n+1-k)M} \cdot \frac{1}{2}[km+(n+1-k)M]=\frac{1}{2} \sum^{n+1}_{k=0}\binom{n+1}{k}p^{k}(1-p)^{n+1-k}=\frac{1}{2}.$$
+As for the approximations for this case, we decided to try and use first-order Taylor approximation. We have that
+$$\mathbb{E}(R/S) \approx \frac{\mu_{R}}{\mu_{S}} - \frac{\Cov(R, S)}{(\mu_{S})^2}+\frac{\Var(S)\mu_{R}}{(\mu_{S})^{3}},$$
+where $R = \sum^{n}_{i=0}Y_{i}M_{i}$ and $S=\sum^{n}_{i=0}M_{i}$. Since $Y_{i}$ is a uniform random variable, we know that $\mathbb{E}[Y_{1}]=\frac{1}{2}$ and $\Var(Y_{i}) = \frac{1}{12}$. Since $M_{i}$ and $Y_{i}$ are independent, it follows that $\mathbb{E}[M_{i}Y_{i}]=\mathbb{E}[M_{i}]\mathbb{E}[Y_{i}]$. Thus, we can calculate needed components:
+$$\mu_{R} = \mathbb{E}\left[\sum^{n}_{i=0}Y_{i}M_{i}\right]=\sum^{n}_{i=0}\mathbb{E}[Y_{i}M_{i}]=\sum^{n}_{i=0}\mathbb{E}[Y_{i}]\mathbb{E}[M_{i}]= \frac{1}{2}\mathbb{E}[M_{i}]=\frac{1}{2}(n+1)\alpha_{1},$$
+$$\mu_{S} = \mathbb{E}\left[\sum^{n}_{i=0}M_{i}\right]=(n+1)\alpha_{1},$$
+$$\sigma_{R} = \Var\left(\sum^{n}_{i=0}Y_{i}M_{i}\right)=\sum^{n}_{i=0}\Var(Y_{i}M_{i})=\sum^{n}_{i=0}\left[\mathbb{E}[M_{i}]^{2}\Var(Y_{i})+\mathbb{E}[Y_{i}]^{2}\Var(M_{i})+\Var(Y_{i})\Var(M_{i})\right]=$$
+$$=\sum^{n}_{i=0}\left[\alpha_{1}^{2}\frac{1}{12} + \frac{1}{4} (\alpha_{2}-\alpha_{1}^{2}) + \frac{1}{12}(\alpha_{2}-\alpha_{1}^{2})\right]=\sum^{n}_{i=0}\left[\frac{1}{12}\alpha_{1}^{2}+\frac{1}{4}\alpha_{2}-\frac{1}{4}\alpha_{1}^{2}+\frac{1}{12}\alpha_{2}-\frac{1}{12}\alpha_{1}^{2}\right]=$$
+$$=\sum^{n}_{i=0}\left[\frac{1}{3}\alpha_{2}^{1}-\frac{1}{4}\alpha_{1}^{2} \right]=(n+1)\left(\frac{1}{3} \alpha_{2}-\frac{1}{4}\alpha_{1}^{2}\right),$$
+$$\sigma_{S}=\Var\left(\sum^{n}_{i=0}M_{i}\right)=\sum^{n}_{i=0}\Var(X_{1})=(n+1)(\alpha_{2}-\alpha_{1}^{2}),$$
+$$\Cov(R,S) = \mathbb{E}[RS]-\mathbb{E}[R]\mathbb{E}[S]=\mathbb{E}\left[\sum^{n}_{i=0}Y_{i}M_{i}^{2}+\sum^{n}_{i\neq j} Y_{i}M_{i}M_{j}\right]-\mu_{R}\mu_{S}=$$
+$$=\sum^{n}_{i=0}\mathbb{E}[Y_{i}]\mathbb{E}[M_{i}^{2}]+\sum^{n}_{i\neq j}\mathbb{E}[Y_{i}]\mathbb{E}[M_{i}M_{j}]-\mu_{R}\mu_{S}=\frac{1}{2}(n+1)\alpha_{2}+\frac{1}{2}\cdot 2 \cdot \frac{n(n+1)}{2}\alpha_{1}^{2}-\frac{1}{2}(n+1)^{2}\alpha_{1}^{2}=$$
+$$= \frac{1}{2}(n+1)\left[\alpha_{2}+n\alpha_{1}-(n+1)\alpha_{1} \right]= \frac{1}{2}(n+1)[\alpha_{2}-\alpha_{1}^{2}].$$
+As a result, we obtain the following formula for approximated expected value of the center of mass:
+$$\mathbb{E}(R/S) \approx \frac{\frac{1}{2}(n+1)\alpha_{1}}{(n+1)\alpha_{1}} - \frac{\frac{1}{2}(n+1)[\alpha_{2}-\alpha_{1}^{2}]}{(n+1)^{2}\alpha_{1}^{2}}+\frac{(n+1)(\alpha_{2}-\alpha_{1}^{2})\frac{1}{2}(n+1)\alpha_{1}}{(n+1)^{3}\alpha_{1}^{2}}=$$
+$$=\frac{1}{2} - \frac{\alpha_{2}-\alpha_{1}^{2}}{2(n+1)\alpha_{1}}+\frac{\alpha_{2}-\alpha_{1}^{2}}{2(n+1)\alpha_{1}}=\frac{1}{2}-\left(\frac{\alpha_{2}-\alpha_{1}^{2}-\alpha_{2}+\alpha_{1}^{2}}{2(n+1)\alpha_{1}} \right) = \frac{1}{2}-\left(\frac{\alpha_{2}-\alpha_{1}^{2}-\alpha_{2}+\alpha_{1}^{2}}{2(n+1)\alpha_{1}} \right) = \frac{1}{2}.$$
+Therefore, by the second-order Taylor expansion, the approximated expected value of the center of mass in this continuous case is $$\mathbb{E}[CM] \approx \frac{1}{2},$$
+which is what we expected it to be. \\
+Concluding, both the rigorous proof with the given mass, as well as the approximations confirm that the expected value of the center of mass, where positions are assigned uniformly between $0$ and $1$, is equal to $\frac{1}{2}$.
+
+\section{Variance and Standard Deviation - Proof}
+\label{secB4}
+
+We can find the standard deviation of the center of mass in this case by first calculating the variance, which would be
+$$\Var(CM) = \E [CM^2] - \E [CM]^2.$$ 
+In the previous section, we found that $\E [CM] = \frac{1}{2}$, thus we need to find the first term:
+$$\E [CM^2] = \sum \E[CM^2 \mid \text{Mass} = M_{0}] \mathbb{P}(\text{Mass} = M_{0}),$$
+where $M_{0}$ is the total mass of the configuration, $k$ is the total number of masses $m$ in the configuration, which occur with probability $p$, and $n+1-k$ is the number of masses $M$, which occur with probability $1-p$. We have:
+$$\E [CM^2] =  \sum \E\left[ \frac{(\sum Y_{i}M_{i})^2}{(\sum M_{i})^2}  \Bigg| \text{Mass} = M_{0} \right] \mathbb{P} (\text{Mass} = M_{0}) = \sum \frac{\E [(\sum Y_{i}M_{i})^2 | M_{0}]}{\E[(\sum M_{i})^2 | M_{0}]} \mathbb{P} (\text{Mass} = M_{0}) = $$
+$$= \sum \frac{\binom{n+1}{k} p^{k}(1-p)^{n+1-k}}{(km+(n+1-k)M)^2} \E \left[\left(\sum Y_{i}M_{i}\right)^2 \bigg| M_{0}\right].$$
+Now we need to calculate the tricky part of this equation, which is the latter term. Since $Y_{i}$ and $M_{i}$ are independent, we have:
+$$  \E \left[\left(\sum Y_{i}M_{i}\right)^2 \bigg| M_{0}\right] = \E \left[ \sum Y_{i}^{2}M_{i}^{2} + \sum_{i \neq j} Y_{i}Y_{j}M_{i}M_{j} \bigg| M_{0} \right] = \frac{1}{3} km^{2}+(n+1-k)M^{2} + \frac{1}{4} \E \left[ \sum_{i \neq j} M_{i}M_{j} \bigg| M_{0}\right].$$
+We found that $\E \left[ \sum_{i \neq j} M_{i}M_{j} \big| M_{0}\right] = (km+(n+1-k)M)^{2} - (km^{2}+(n+1-k)M^{2})$. Hence, 
+$$\E \left[\left(\sum Y_{i}M_{i}\right)^2 \bigg| M_{0}\right] =  \frac{1}{3} km^{2}+(n+1-k)M^{2} + \frac{1}{4} \left[(km+(n+1-k)M)^{2} - (km^{2}+(n+1-k)M^{2}) \right] = $$
+$$=\frac{1}{4} (km+(n+1-k)M)^{2} + \frac{1}{12} \left( km^{2}+(n+1-k)M^{2}\right).$$
+Returning to our original equation, we have
+$$\E [CM^2] =\sum \frac{\binom{n+1}{k} p^{k}(1-p)^{n+1-k}}{(km+(n+1-k)M)^2} \left[ \frac{1}{4} (km+(n+1-k)M)^{2} + \frac{1}{12} \left( km^{2}+(n+1-k)M^{2}\right)\right]=$$
+$$= \frac{1}{4} + \frac{1}{12} \sum^{n+1}_{k=0} \binom{n+1}{k} p^{k}(1-p)^{n+1-k}\frac{km^{2}+(n+1-k)M^{2}}{(km+(n+1-k)M)^2}.$$
+As a result, the formula for variance is as follows:
+$$\Var(CM) = \E[CM^{2}]-\E[CM]^2=\frac{1}{4} + \frac{1}{12} \sum^{n+1}_{k=0} \binom{n+1}{k} p^{k}(1-p)^{n+1-k}\frac{km^{2}+(n+1-k)M^{2}}{(km+(n+1-k)M)^2} - \left(\frac{1}{2}\right)^{2}= $$
+$$=\frac{1}{12} \sum^{n+1}_{k=0} \binom{n+1}{k} p^{k}(1-p)^{n+1-k}\frac{km^{2}+(n+1-k)M^{2}}{(km+(n+1-k)M)^2}.$$
+We used both R Studio and Mathematica to compute this summation, because R cannot compute summations with $n > 10^{3}+28$. We found that as $n$ approaches infinity, the standard deviation goes to $0$. One way we can justify this is by considering $\binom{n+1}{k} p^{k}(1-p)^{n+1-k}$, in which the binomial has the highest value at $k = \frac{n+1}{2}$ for even $n$'s. We would want to find a way to show that this binomial goes to $0$ as $n$ approaches infinity, so that the whole term goes to $0$. If we assume $p=\frac{1}{2}$, then for the highest possible value of the binomial we would have
+$$\binom{n+1}{k} p^{k}(1-p)^{n+1-k}=\binom{n+1}{\frac{n+1}{2}} \left(\frac{1}{2}\right)^{n+1}.$$
+The binomial coefficient can be estimated by Stirling's Approximation, which states that 
+$$n! \sim \sqrt{2\pi n} \left(\frac{n}{e} \right)^{n}$$
+where the sign $\sim$ indicates that the two quantities are asymptotic, that is, their ratio goes to $1$ when $n$ approaches infinity. Applying this formula to our case, we have that
+$$\binom{n+1}{\frac{n+1}{2}}=\frac{(n+1)!}{\left(\frac{n+1}{2}\right)!\left(\frac{n+1}{2}\right)!} \sim \frac{\sqrt{2\pi(n+1)}\left(\frac{n+1}{e}\right)^{n+1}}{\left(\sqrt{2\pi\frac{(n+1)}{2}}\left(\frac{\frac{n+1}{2}}{e}\right)^{\frac{n+1}{2}}\right)^{2}}= \frac{\sqrt{2\pi(n+1)}\left(\frac{n+1}{e}\right)^{n+1}}{\frac{1}{2}\left(\sqrt{2\pi(n+1)}\right)^{2} \left(\frac{\frac{n+1}{2}}{e}\right)^{n+1}}=$$
+$$=\frac{\left(\frac{n+1}{e}\right)^{n+1}}{\frac{1}{2}\sqrt{2\pi(n+1)}} \cdot \left(\frac{\frac{n+1}{2}}{e}\right)^{-(n+1)}=\frac{2^{n+1}\left(\frac{n+1}{e}\right)^{n+1}}{\frac{1}{2}\sqrt{2\pi(n+1)}} \cdot \left(\frac{n+1}{e}\right)^{-(n+1)}=\frac{2^{n+1}}{\sqrt{\frac{\pi}{2}(n+1)}}.$$
+Thus, it follows that for $n$ approaching infinity,
+$$\binom{n+1}{\frac{n+1}{2}} \left(\frac{1}{2}\right)^{n+1} \sim \frac{2^{n+1}}{\sqrt{\frac{\pi}{2}(n+1)}} \cdot\left(\frac{1}{2}\right)^{n+1} = \frac{1}{\sqrt{\frac{\pi}{2}(n+1)}} \to 0.$$
+In other words, the biggest binomial coefficient for $p=\frac{1}{2}$ goes to $0$ as $n$ approaches infinity.
+\\
+TBC \\
+\section{Variance and Standard Deviation - Approximations}
+\label{secB5}
+As for the approximations in this case, we can estimate the standard deviation through calculating variance in two ways; one of them is direct, $\Var(X)=\mathbb{E}[X^{2}]-\mathbb{E}[X]^{2}$, and the other one is the first-order Taylor expansion, $\Var(R/S) \approx \frac{\mu_{R}^{2}}{\mu_{S}^{2}}\left[ \frac{\sigma_{R}^{2}}{\mu_{R}^{2}} - 2 \frac{\Cov(R, S)}{\mu_{R}\mu_{S}}+ \frac{\sigma^{2}_{S}}{\mu_{S}^{2}}\right]$, which is an approximation as opposed to the former. \\
+First, we will try using the first formula, which would be in our case:
+$$\Var(CM) = \mathbb{E}\left[\left(\frac{ \sum^{n}_{i=0}Y_{i}M_{i}}{\sum^{n}_{i=0}M_{i}}\right)^{2}\right] - \mathbb{E}[CM]^{2}\approx \mathbb{E}\left[\frac{\left( \sum^{n}_{i=0}Y_{i}M_{i}\right)^{2}}{\left({\sum^{n}_{i=0}M_{i}}\right)^{2}}\right] -\frac{1}{4}.$$ \\
+Again, there are two ways of approximating the first term of the above equation. We can either use first-order approximation, which would be $\mathbb{E}[R/S] \approx \frac{\mathbb{E}[R]}{\mathbb{E}[S]}$, or use second-order Taylor expansion. So far, we tried to use the former one. For our case, we have
+$$\mathbb{E}[CM] \approx \frac{\mathbb{E}[R]}{\mathbb{E}[S]},$$
+where $R = \sum^{n}_{i=0}Y_{i}M_{i}$ and $S=\sum^{n}_{i=0}M_{i}$. Thus,
+$$\mathbb{E}[CM] \approx \frac{\mathbb{E}[\left(\sum^{n}_{i=0}Y_{i}M_{i}\right)^{2}]}{\mathbb{E}[\left(\sum^{n}_{i=0}M_{i}\right)^{2}]},$$
+$$\mathbb{E}\left[\left(\sum^{n}_{i=0}Y_{i}M_{i}\right)^{2}\right]=\sum^{n}_{i=0}\mathbb{E}[M_{i}^{2}]\mathbb{E}[Y_{i}^{2}]+\sum^{n}_{i\neq j} \mathbb{E}[Y_{i}]\mathbb{E}[Y_{j}]\mathbb{E}[M_{i}]\mathbb{E}[M_{j}],$$
+where
+$$\mathbb{E}[Y_{i}^{2}]=\int_{0}^{1}x^{2}\frac{1}{1-0}dx = \frac{x^{3}}{3} \bigg|^{1}_{0}=\frac{1}{3}$$ and
+$$\mathbb{E}[M_{i}^{2}]=(n+1)\alpha_{2}+n(n+1)\alpha^{2}_{1},$$
+as calculated in the previous chapter. Thus, we have
+$$\frac{\mathbb{E}[\left(\sum^{n}_{i=0}Y_{i}M_{i}\right)^{2}]}{\mathbb{E}[\left(\sum^{n}_{i=0}M_{i}\right)^{2}]}=\frac{\frac{1}{3}(n+1)\alpha_{2}+\frac{1}{4}\cdot 2 \cdot \frac{n(n+1)}{2}\alpha_{1}^{2}}{(n+1)\alpha_{2}+n(n+1)\alpha^{2}_{1}} =\frac{\frac{1}{3}\alpha_{2}+\frac{n}{4}\alpha_{1}^{2}}{\alpha_{2}+n\alpha^{2}_{1}}= \frac{4\alpha_{2}+3n\alpha_{1}^{2}}{12\alpha_{2}+12n\alpha^{2}_{1}}=\frac{1}{4}\left(\frac{16\alpha_{2}+12n\alpha_{1}^{2}}{12\alpha_{2}+12n\alpha^{2}_{1}} \right).$$
+Clearly, $\mathbb{E}\left[\left(\sum^{n}_{i=0}Y_{i}M_{i}\right)^{2}\right] \geq \frac{1}{4}$. If we were to plug this in our approximation for variance, we would get:
+$$\Var(CM) \approx \frac{1}{4}\left(\frac{16\alpha_{2}+12n\alpha_{1}^{2}}{12\alpha_{2}+12n\alpha^{2}_{1}} \right) - \frac{1}{4}.$$
+which seems to approach $0$ as $n$ gets larger, because the fraction would approach the value of $1$. Also,
+$$\sd(CM) = \sqrt{\Var(CM)} = \sqrt{\frac{1}{4}\left(\frac{16\alpha_{2}+12n\alpha_{1}^{2}}{12\alpha_{2}+12n\alpha^{2}_{1}} \right) - \frac{1}{4}} = \frac{1}{2}\sqrt{\left(\frac{16\alpha_{2}+12n\alpha_{1}^{2}}{12\alpha_{2}+12n\alpha^{2}_{1}} \right) - 1}.$$
+Intuitively, as $n\to \infty$, our result will approach $0$, i.e., $n \to\infty$ implies $\sd(CM)\to 0$. Perhaps a thing to consider in the future is to estimate the expected value by using second-order Taylor expansion. \\
+As for the second way to estimate variance, let us look at the Taylor approximation, $\Var(R/S) \approx \frac{\mu_{R}^{2}}{\mu_{S}^{2}}\left[ \frac{\sigma_{R}^{2}}{\mu_{R}^{2}} - 2 \frac{\Cov(R, S)}{\mu_{R}\mu_{S}}+ \frac{\sigma^{2}_{S}}{\mu_{S}^{2}}\right]$. Since we calculated needed components in the previous section, we have
+$$\Var(R/S) \approx \frac{\frac{1}{4}(n+1)^{2}\alpha_{1}^{2}}{(n+1)^{2}\alpha_{1}^{2}}\left[ \frac{(n+1)^{2}\left(\frac{1}{3} \alpha_{2}-\frac{1}{4}\alpha_{1}^{2}\right)^{2}}{\frac{1}{4}(n+1)^{2}\alpha_{1}^{2}} - 2 \frac{\frac{1}{2}(n+1)[\alpha_{2}-\alpha_{1}^{2}]}{\frac{1}{2}(n+1)\alpha_{1}(n+1)\alpha_{1}}+ \frac{(n+1)^{2}(\alpha_{2}-\alpha_{1}^{2})^{2}}{(n+1)^{2}\alpha_{1}^{2}}\right]=$$
+$$= \frac{1}{4}\left[ \frac{\left(\frac{1}{3} \alpha_{2}-\frac{1}{4}\alpha_{1}^{2}\right)^{2}}{\frac{1}{4}\alpha_{1}^{2}} - 2 \frac{\alpha_{2}-\alpha_{1}^{2}}{(n+1)\alpha_{1}^{2}} + \frac{(\alpha_{2}-\alpha_{1}^{2})^{2}}{\alpha_{1}^{2}}\right].$$
+The standard deviation would thus be
+$$\sd(CM) = \sqrt{\Var(CM)} \approx \sqrt{\frac{1}{4}\left[ \frac{\left(\frac{1}{3} \alpha_{2}-\frac{1}{4}\alpha_{1}^{2}\right)^{2}}{\frac{1}{4}\alpha_{1}^{2}} - 2 \frac{\alpha_{2}-\alpha_{1}^{2}}{(n+1)\alpha_{1}^{2}} + \frac{(\alpha_{2}-\alpha_{1}^{2})^{2}}{\alpha_{1}^{2}}\right]}=$$
+$$=\frac{1}{2}\sqrt{ \frac{\left(\frac{1}{3} \alpha_{2}-\frac{1}{4}\alpha_{1}^{2}\right)^{2}}{\frac{1}{4}\alpha_{1}^{2}} - 2 \frac{\alpha_{2}-\alpha_{1}^{2}}{(n+1)\alpha_{1}^{2}} + \frac{(\alpha_{2}-\alpha_{1}^{2})^{2}}{\alpha_{1}^{2}}}.$$
+TBC
+\section{Simulations}
+\label{secB6}
+All in all, we have results for the standard deviation of the center of mass in the uniform case from repeated simulations, one proven formula that uses conditional expectation, and two approximations. We defined the two approximations in R and conducted simulations by varying $M$ (one of the masses) to compare the results and check which estimation suits the data from simulations more (in order to avoid variation of data, we took a mean of five to ten simulation results). On the side, we also tested if the expected value of the center of mass is truly approximately $\frac{1}{2}$ regardless of factors like $m$, $M$, $n$, $p$, and the simulations confirmed the value. The code is provided in Appendix 1.3. \\
+We compared the estimations for the standard deviation by calculating relative errors with respect to the numbers we get from the proven formula. Below are two of the tables summarizing the data with results for $m=1$, varied $M$'s, $p=0.5$, and $n=100$, $n=1000$, $n=10000$.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.6]{CompareSD.png}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.6]{CompareSD2.png}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.6]{CompareSD3.png}
+\end{figure}
+
+It seems that the approximations yield very similar results to the one we obtain by using the formula we proved. The estimate that uses Taylor expansion for variance proved to be more accurate than the estimate we get from using second-order Taylor expansion on the expected value in the $\Var(CM)=\E[CM^{2}]-\E[CM]^{2}$ formula. What we notice, again, is that as $n$ goes to infinity, the standard deviation goes to $0$.
+
+\section{Analysis of Results}
+\label{secB7}
+
+Although our results suggest that in this uniform case, $\mathbb{E}[CM] \approx \frac{1}{2}$ and $\sd(CM) \to 0$ as $n$ gets larger and larger, we have not yet found a solid proof. It would have been helpful if the approximations had an error term. \\
+We tried to bound the standard deviation instead, to have a better idea of its behavior. It seems that the variance is bounded above by $\frac{1}{12}$, but we do not have enough evidence except from our simulations. One thing we considered is the formula $\mathbb{E}\left[\frac{\left( \sum^{n}_{i=0}Y_{i}M_{i}\right)^{2}}{\left({\sum^{n}_{i=0}M_{i}}\right)^{2}}\right] -\frac{1}{4}$ - since $0\leq Y_{i} \leq 1$, then $\sum^{n}_{i=0}Y_{i}M_{i} \leq \sum^{n}_{i=0}M_{i}$, i.e., $0 \leq \left( \frac{\sum^{n}_{i=0}Y_{i}M_{i}}{\sum^{n}_{i=0}M_{i}} \right)^{2}\leq 1$. Thus, we get 
+$$0 \leq \Var(CM) = \left( \frac{\sum^{n}_{i=0}Y_{i}M_{i}}{\sum^{n}_{i=0}M_{i}} \right)^{2} - \frac{1}{4} \leq \frac{3}{4}.$$
+However, this result is not yet satisfying. Another option we considered is comparing the standard deviation of the center of mass of the discrete, but standardized case, and the uniform case from this chapter. To standardize the discrete case, we use the formula 
+$$CM = \frac{\sum^{n}_{i=0} (i/n) M_{i}}{\sum^{n}_{i=0}M_{i}}.$$
+Thus, we calculated the standard deviations of the two cases using the proven formula, and were able to collect and compare data. We fixed $m=1$, $M=10$, $p=0.5$ and varied number of nodes $n$. Below is the table with results:
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.8]{CompareDandC.png}
+\end{figure}
+We can see, the standard deviation of the two cases is very similar. All of the times, the standard deviation of the uniform case is greater than that of the discrete case. However, the difference seems to continuously decrease as $n$ increases. \\
+
+\section{Conclusion}
+\label{secB8}
+
+\chapter{Center of Mass in the Two-dimensional Uniform Case}
+\label{chapC}
+
+\section{Introduction to the Case}
+\label{secC2}
+
+We were also interested in the two-dimensional uniform case. We looked at a unit circle in an xy-plane with polar coordinates, where the angle $\theta$ is determined uniformly. Then we calculated the coordinates $(x,y)$ by setting $x = \cos \theta$ and $y=\sin \theta$. We define the center of mass as follows
+$$CM_{X} = \frac{\sum^{n}_{i=0} \cos (\theta)M_{\theta}}{\sum^{n}_{i=0}M_{\theta}},$$
+$$CM_{Y}=\frac{\sum^{n}_{i=0} \sin (\theta)M_{\theta}}{\sum^{n}_{i=0}M_{\theta}},$$
+We look at the coordinates separately and define $\mathbb{E}[CM]=(x,y)$, $\sd(CM)=(x,y)$. The code used for simulations is included in Appendix A.4. Regardless of the values of $m$, $M$, $n$ and $p$, we got the following results:
+$$\mathbb{E}[CM] \approx (0,0),$$
+$$\sd(CM) \approx (0,0).$$
+We will try to prove these in the next sections.\\
+In this case, analogically to the previous cases, we have that
+$$\E[M_{\theta}]=\alpha_{1},$$
+$$\E[M_{\theta}^{2}]=\alpha_{2}.$$
+
+\section{Expected Value}
+\label{secC3}
+We will approximate the expected value by first-order approximation, $\mathbb{E}[R/S] \approx \frac{\mathbb{E}[R]}{\mathbb{E}[S]}$. We will first calculate needed components:
+$$\mathbb{E}[\cos (\theta)] = \int^{2\pi}_{0}\cos (t) \frac{1}{2\pi} dt = \frac{\sin(t)}{2\pi} \bigg|^{2\pi}_{0}=0,$$
+$$\mathbb{E}[\sin (\theta)] = \int^{2\pi}_{0}\sin (t) \frac{1}{2\pi} dt = \frac{-\cos(t)}{2\pi} \bigg|^{2\pi}_{0}=0,$$
+Thus, for the x-coordinate, we have:
+$$\mathbb{E}[CM_{X}] \approx \frac{\mathbb{E}[\sum^{2\pi}_{i=0} \cos (\theta)M_{\theta}]}{\mathbb{E}[\sum^{2\pi}_{i=0}M_{\theta}]} = \frac{\sum^{2\pi}_{i=0} \mathbb{E}[\cos (\theta)]\mathbb{E}[M_{\theta}]}{\sum^{2\pi}_{i=0}\mathbb{E}[M_{\theta}]}=\frac{\sum^{2\pi}_{i=0}\mathbb{E}[\cos (\theta)] \alpha_{1}}{n\alpha_{1}}=0,$$
+$$\mathbb{E}[CM_{Y}]  \frac{\mathbb{E}[\sum^{2\pi}_{i=0} \sin (\theta)M_{\theta}]}{\mathbb{E}[\sum^{2\pi}_{i=0}M_{\theta}]} = \frac{\sum^{2\pi}_{i=0} \mathbb{E}[\sin (\theta)]\mathbb{E}[M_{\theta}]}{\sum^{2\pi}_{i=0}\mathbb{E}[M_{\theta}]}=\frac{\sum^{2\pi}_{i=0}\mathbb{E}[\sin (\theta)] \alpha_{1}}{n\alpha_{1}}=0.$$
+Thus, it follows that $\mathbb{E}[CM] \approx (0,0)$.\\
+TBC
+\section{Variance and Standard Deviation}
+\label{secC4}
+
+In order to find variance of the center of mass of this configuration, we will use the formula $\Var(CM) = \E[CM^{2}]-\E[CM]^{2}$. We will approximate the former term for the $x$-coordinate as 
+$$ \E[CM_{X}^{2}] = \E\left[ \frac{\left(\sum \cos(\theta) M_{\theta} \right)^{2}}{\left( \sum M_{\theta} \right)^{2}} \right]\approx 
+ \frac{\E\left[\left(\sum \cos(\theta) M_{\theta} \right)^{2}\right]}{\E\left[\left(\sum M_{\theta} \right)^{2}\right]}.$$
+ The $y$-coordinate would have $\sin(\theta)$ instead of $\cos(\theta)$. We know that
+ $$\E[\cos^{2}(\theta)] = \frac{1}{2\pi} \int^{2\pi}_{0} \cos^{2}(\theta)d\theta = \frac{1}{2\pi}\int^{2\pi}_{0} \frac{1}{2}+\frac{\cos(2\theta)}{2}d\theta=\frac{1}{2\pi}\left[\frac{1}{2}\theta \mid^{2\pi}_{0} + \frac{\sin(2\theta)}{4}\mid^{2\pi}_{0}\right]=\frac{1}{2\pi}[\pi+0+0]=\frac{1}{2}.$$
+ Similarly,
+ $$\E[\sin^{2}(\theta)] = \frac{1}{2}.$$
+Thus, for each of the coordinates, we have
+$$\E[CM_{X}^{2}] \approx  \frac{\E\left[\left(\sum \cos(\theta) M_{\theta} \right)^{2}\right]}{\E\left[\left(\sum M_{\theta} \right)^{2}\right]} =  \frac{\E\left[\sum \cos^{2}(\theta) M_{\theta}^{2} + \sum_{\theta \neq \alpha} \cos(\theta)\cos(\alpha)M_{\theta}M_{\alpha} \right]}{\E\left[\sum M_{\theta}^{2} +\sum_{\theta \neq \alpha} M_{\theta}M_{\alpha}\right]} = $$
+$$=\frac{\E\left[\frac{1}{2}\alpha_{2}\right]}{\E\left[(n+1)\alpha_{2}+n(n+1)\alpha_{1}^{2}\right]}=\frac{\alpha_{2}}{2(n+1)(\alpha_{2}+n\alpha_{1}^{2})}.$$
+Clearly, the expected value of the center of mass of the $x$-coordinate goes to $0$ as $n$ goes to infinity. As for the $y$-coordinate, we have
+$$\E[CM_{X}^{2}] \approx  \frac{\E\left[\left(\sum \sin(\theta) M_{\theta} \right)^{2}\right]}{\E\left[\left(\sum M_{\theta} \right)^{2}\right]} =  \frac{\E\left[\sum \sin^{2}(\theta) M_{\theta}^{2} + \sum_{\theta \neq \alpha} \sin(\theta)\sin(\alpha)M_{\theta}M_{\alpha} \right]}{\E\left[\sum M_{\theta}^{2} +\sum_{\theta \neq \alpha} M_{\theta}M_{\alpha}\right]} = $$
+$$=\frac{\E\left[\frac{1}{2}\alpha_{2}\right]}{\E\left[(n+1)\alpha_{2}+n(n+1)\alpha_{1}^{2}\right]}=\frac{\alpha_{2}}{2(n+1)(\alpha_{2}+n\alpha_{1}^{2})}.$$
+Thus, as $n$ goes to infinity, $\E[CM_{X}^{2}]$, $\E[CM_{Y}^{2}]$ both go to $0$. As a result, variance, as well as standard deviation of the center of mass, will approach $0$ since $\E[CM_{X}]=\E[CM_{Y}] \approx 0$, that is, 
+$$\Var(CM) \approx (0,0).$$
+\section{Analysis of Results}
+\label{secC5}
+
+\section{Conclusion}
+\label{secC6}
+
+\begin{appendices}
+\chapter{R Codes}
+\label{rcodes}
+
+\section{One-dimensional Discrete Case}
+\label{A.1}
+\newpage
+
+\begin{figure}[H]
+\centering{\includegraphics[scale=0.9]{CodeD.pdf}}
+\end{figure}
+
+\section{One-dimensional Uniform Case}
+\label{A.2}
+
+\begin{figure}[H]
+\centering{\includegraphics[scale=0.9]{CodeC.pdf}}
+\end{figure}
+
+\section{Standard Deviation: Discrete vs Uniform Case}
+\label{A.3}
+
+\begin{figure}[H]
+\centering{\includegraphics[scale=0.9]{CompareDandC.pdf}}
+\end{figure}
+
+\section{Two-dimensional Uniform Case}
+\label{A.4}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.9]{Circle.pdf}
+\end{figure}
+
+\chapter{Mathematica Codes}
+\label{label}
+
+\section{Algorithm for Calculating Double, Triple and Quadruple Summations}
+\label{B.1}
+
+(explanation)
+
+\begin{figure}[h]
+\hspace*{-2cm}  
+\includegraphics[scale=1]{Mathematica1.pdf}
+\end{figure}
+
+\end{appendices}
+
+
+\begin{bibliog}
+
+\bib{Bib1}{book}{
+author = {Chihara, Laura M.},
+title = {Mathematical Statistics with Resampling and R},
+publisher = {John Wiley},
+address = {},
+date = {2011}
+}
+
+\bib{Bib2}{book}{
+author = {Schay, Geza},
+title = {Introduction to Probability with Statistical Applications},
+publisher = {Birkhauser},
+address = {Boston},
+date = {2007}
+}
+
+\bib{Bib3}{article}{
+author = {Zeltman, Howard},
+title = {Approximations for Mean and Variance of a Ratio},
+eprint = {http://www.stat.cmu.edu/~hseltman/files/ratio.pdf}
+}
+
+\bib{Bib4}{book}{
+author = {Beutler, Gerhard},
+title = {Methods of Celestial Mechanics: Volume I: Physical, Mathematical, and Numerical Principles},
+publisher = {Springer Science and Business Media},
+date = {2005}
+}
+
+\bib{Bib5}{report}{
+author = {Muller Hardy, Finnegan Maximilan},
+title = {The Expectation for the Center of Mass of Finite Integer Grids},
+note = {Senior Projects Spring 2017.300}
+eprint = {http://digitalcommons.bard.edu/senproj_s2017/300}
+}
+
+\end{bibliog}
+
+\end{document}
+
+% end of file bardproj_template.tex
